@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { GithubRepo } from './github.interface';
 
 @Injectable()
 export class GithubService {

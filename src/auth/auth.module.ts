@@ -20,6 +20,7 @@ import { PassportModule } from '@nestjs/passport';
     }),
     UsersModule,
   ],
+  controllers: [AuthController],
   providers: [AuthService, GitHubStrategy, JwtStrategy],
   exports: [JwtStrategy],
 })
