@@ -9,12 +9,30 @@ export class UsersService {
   constructor(@InjectRepository(User) private usersRepo: Repository<User>) {}
 
   async findOrCreateByGithub(profile: GitHubProfile): Promise<User> {
-    const existing = await this.usersRepo.findOne({
+    let user = await this.usersRepo.findOne({
       where: { githubId: profile.githubId },
     });
-    if (existing) return existing;
 
-    const user = this.usersRepo.create(profile);
+    if (user) {
+      if (user.githubAccessToken !== profile.githubAccessToken) {
+        user.githubAccessToken = profile.githubAccessToken;
+        await this.usersRepo.save(user);
+      }
+      return user;
+    }
+
+    user = this.usersRepo.create({
+      githubId: profile.githubId,
+      username: profile.username,
+      emails: profile.emails,
+      photos: profile.photos,
+      githubAccessToken: profile.githubAccessToken,
+    });
+
     return this.usersRepo.save(user);
+  }
+
+  async findById(id: number): Promise<User | null> {
+    return this.usersRepo.findOne({ where: { id } });
   }
 }

@@ -3,4 +3,5 @@ export interface GitHubProfile {
   username: string;
   emails?: { value: string }[];
   photos?: { value: string }[];
+  githubAccessToken: string;
 }

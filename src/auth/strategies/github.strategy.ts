@@ -21,12 +21,13 @@ export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
     });
   }
 
-  validate(_: string, __: string, profile: GithubProfile): any {
+  validate(accessToken: string, __: string, profile: GithubProfile): any {
     return {
       githubId: profile.id,
       username: profile.username,
       email: profile.emails?.[0]?.value,
       avatar: profile.photos?.[0]?.value,
+      githubAccessToken: accessToken,
     };
   }
 }

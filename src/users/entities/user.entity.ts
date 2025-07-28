@@ -11,9 +11,12 @@ export class User {
   @Column()
   username: string;
 
-  @Column({ nullable: true })
-  email: string;
+  @Column({ type: 'json', nullable: true })
+  emails?: { value: string }[];
+
+  @Column({ type: 'json', nullable: true })
+  photos?: { value: string }[];
 
   @Column({ nullable: true })
-  avatar: string;
+  githubAccessToken: string;
 }
