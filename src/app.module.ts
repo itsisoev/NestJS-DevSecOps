@@ -5,7 +5,11 @@ import { AuditModule } from './audit/audit.module';
 import { PublicAuditModule } from './public-audit/public-audit.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-ioredis';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { GithubModule } from './github/github.module';
 
 @Module({
   imports: [
@@ -21,9 +25,24 @@ import { ConfigModule } from '@nestjs/config';
       }),
       isGlobal: true,
     }),
-    ConfigModule.forRoot({
-      isGlobal: true,
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('DB_HOST'),
+        port: parseInt(configService.get<string>('DB_PORT') ?? '5432', 10),
+        username: configService.get('DB_USERNAME'),
+        password: configService.get('DB_PASSWORD'),
+        database: configService.get('DB_NAME'),
+        autoLoadEntities: true,
+        synchronize: true,
+      }),
+      inject: [ConfigService],
     }),
+    UsersModule,
+    AuthModule,
+    GithubModule,
   ],
   controllers: [AppController],
   providers: [AppService],
