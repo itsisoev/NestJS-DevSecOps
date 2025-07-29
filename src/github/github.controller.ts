@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
 import { GithubService } from './github.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -11,5 +11,16 @@ export class GithubController {
   async getRepos(@Req() req: Request & { user: any }) {
     const token = req.user.githubAccessToken;
     return this.githubService.getUserRepos(token);
+  }
+
+  @Get('package-json/:owner/:repo')
+  @UseGuards(JwtAuthGuard)
+  async getPackageJson(
+    @Req() req: Request & { user: any },
+    @Param('owner') owner: string,
+    @Param('repo') repo: string,
+  ) {
+    const token = req.user.githubAccessToken;
+    return this.githubService.getPackageJson(token, owner, repo);
   }
 }

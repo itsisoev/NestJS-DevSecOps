@@ -1,11 +1,17 @@
 import {
   Controller,
+  Get,
+  Param,
   Post,
+  Req,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuditService } from './audit.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { GithubService } from 'src/github/github.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 type PackageJson = {
   dependencies?: Record<string, string>;
@@ -18,7 +24,10 @@ interface UploadedFileWithBuffer {
 
 @Controller('audit')
 export class AuditController {
-  constructor(private readonly auditService: AuditService) {}
+  constructor(
+    private readonly auditService: AuditService,
+    private readonly githubService: GithubService,
+  ) {}
 
   @Post('check-package')
   @UseInterceptors(FileInterceptor('file'))
@@ -44,5 +53,25 @@ export class AuditController {
     }
 
     return this.auditService.analyzeDependencies(json as PackageJson);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('github/:owner/:repo')
+  async analyzeGitHubPackageJson(
+    @Req() req: Request & { user: any },
+    @Param('owner') owner: string,
+    @Param('repo') repo: string,
+  ) {
+    const token = req.user.githubAccessToken;
+    const pkg = await this.githubService.getPackageJson(token, owner, repo);
+
+    if (!pkg || typeof pkg !== 'object') {
+      return {
+        message: 'package.json не найден или некорректный',
+        results: [],
+      };
+    }
+
+    return this.auditService.analyzeDependencies(pkg);
   }
 }
