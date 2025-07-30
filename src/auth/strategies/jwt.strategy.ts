@@ -12,18 +12,25 @@ interface JwtPayload {
 @Injectable()
 export class JwtStrategy extends PassportStrategy(JwtStrategyBase) {
   constructor(
-    private usersService: UsersService,
-    private configService: ConfigService,
+    private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
   ) {
+    const jwtSecret = configService.get<string>('JWT_SECRET');
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET is not defined in the environment');
+    }
+
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken() as () => string,
-      secretOrKey: configService.get<string>('JWT_SECRET'),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: jwtSecret,
     });
   }
 
   async validate(payload: JwtPayload) {
     const user = await this.usersService.findById(payload.sub);
-    if (!user) throw new UnauthorizedException('User not found');
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
     return user;
   }
 }
