@@ -3,11 +3,19 @@ import { Strategy } from 'passport-github2';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+export interface GitHubValidatePayload {
+  githubId: string;
+  username: string;
+  emails?: string;
+  photos?: string;
+  githubAccessToken: string;
+}
+
 interface GithubProfile {
   id: string;
   username: string;
-  emails?: { value: string }[];
-  photos?: { value: string }[];
+  emails?: { value: string }[] | undefined;
+  photos?: { value: string }[] | undefined;
 }
 
 @Injectable()
@@ -21,12 +29,18 @@ export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
     });
   }
 
-  validate(accessToken: string, __: string, profile: GithubProfile): any {
+  validate(
+    accessToken: string,
+    __: string,
+    profile: GithubProfile,
+  ): GitHubValidatePayload {
+    console.log('📦 validate called with profile:', profile);
+
     return {
       githubId: profile.id,
       username: profile.username,
-      email: profile.emails?.[0]?.value,
-      avatar: profile.photos?.[0]?.value,
+      emails: profile.emails?.[0]?.value,
+      photos: profile.photos?.[0]?.value,
       githubAccessToken: accessToken,
     };
   }
