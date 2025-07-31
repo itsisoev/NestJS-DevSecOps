@@ -16,6 +16,7 @@ export interface AuditResult {
 export interface AuditResponse {
   message: string;
   results: AuditResult[];
+  projectName: string;
 }
 
 export interface CachedAuditResult {

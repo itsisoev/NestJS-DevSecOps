@@ -35,7 +35,8 @@ export class AuditService {
 
   async analyzeDependencies(
     pkg: PackageJson,
-  ): Promise<{ message: string; results: AuditResult[] }> {
+    projectName: string = 'Без названия',
+  ): Promise<{ projectName: string; message: string; results: AuditResult[] }> {
     const deps = { ...pkg.dependencies, ...pkg.devDependencies };
     const results: AuditResult[] = [];
 
@@ -64,6 +65,7 @@ export class AuditService {
     }
 
     return {
+      projectName,
       message: 'Анализ завершен',
       results,
     };

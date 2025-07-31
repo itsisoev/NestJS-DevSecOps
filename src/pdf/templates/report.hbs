@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size: 12px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+<h1>Анализ зависимостей: {{projectName}}</h1>
+<p style="text-align: center; font-size: 10px; color: #041f30;">Сгенерировано: {{generatedAt}}</p>
+<a href="{{githubUrl}}" target="_blank" style="color: #3498db; text-decoration: none;">
+  {{githubText}}
+</a>
+<table>
+  <thead>
+  <tr>
+    <th>Название</th>
+    <th>Текущая</th>
+    <th>Последняя</th>
+    <th>Статус</th>
+    <th>Размер</th>
+  </tr>
+  </thead>
+  <tbody>
+  {{#each results}}
+    <tr>
+      <td>{{name}}</td>
+      <td>{{version}}</td>
+      <td>{{latestVersion}}</td>
+      <td style="color: {{statusColor}}; font-weight: bold;">{{status}}</td>
+      <td>{{sizeLabel}}</td>
+    </tr>
+  {{/each}}
+  </tbody>
+</table>
+</body>
+</html>
