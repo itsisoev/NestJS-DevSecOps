@@ -8,19 +8,12 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AuditService } from './audit.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AuditService } from './services/audit.service';
 import { GithubService } from 'src/github/github.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-
-type PackageJson = {
-  dependencies?: Record<string, string>;
-  devDependencies?: Record<string, string>;
-};
-
-interface UploadedFileWithBuffer {
-  buffer: Buffer;
-}
+import { Request } from 'express';
+import { JwtRequest, PackageJson, UploadedFileWithBuffer } from './types/audit';
 
 @Controller('audit')
 export class AuditController {
@@ -31,16 +24,15 @@ export class AuditController {
 
   @Post('check-package')
   @UseInterceptors(FileInterceptor('file'))
-  checkPackage(@UploadedFile() file: UploadedFileWithBuffer) {
+  async checkPackage(@UploadedFile() file: UploadedFileWithBuffer) {
     if (!file?.buffer) {
       throw new Error('Файл не найден или пустой');
     }
 
     let json: unknown;
     try {
-      json = JSON.parse(file.buffer.toString());
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (e) {
+      json = JSON.parse(file.buffer.toString('utf-8'));
+    } catch {
       throw new Error('Ошибка парсинга JSON');
     }
 
@@ -58,7 +50,7 @@ export class AuditController {
   @UseGuards(JwtAuthGuard)
   @Get('github/:owner/:repo')
   async analyzeGitHubPackageJson(
-    @Req() req: Request & { user: any },
+    @Req() req: JwtRequest,
     @Param('owner') owner: string,
     @Param('repo') repo: string,
   ) {

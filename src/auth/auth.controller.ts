@@ -18,7 +18,6 @@ export class AuthController {
     @Req() req: Request & { user: GitHubProfile },
     @Res() res: Response,
   ) {
-    console.log('🔐 GitHub OAuth User:', req.user);
     const token = await this.authService.validateOAuthLogin(req.user);
     res.redirect(
       `http://localhost:4200/login/success?token=${token.access_token}`,

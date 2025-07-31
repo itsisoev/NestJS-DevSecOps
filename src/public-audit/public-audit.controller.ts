@@ -26,13 +26,14 @@ export class PublicAuditController {
     if (!file?.buffer) {
       throw new BadRequestException('Файл не найден или пустой');
     }
+
     const content = file.buffer.toString('utf8');
 
     try {
       return await this.publicAuditService.analyzeAndCache(content);
     } catch (e) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      throw new BadRequestException(e.message || 'Ошибка анализа');
+      const msg = e instanceof Error ? e.message : 'Ошибка анализа';
+      throw new BadRequestException(msg);
     }
   }
 
