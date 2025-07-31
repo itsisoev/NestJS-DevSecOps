@@ -11,7 +11,6 @@ export interface AuditResult {
   needsUpdate: boolean;
   latestVersion?: string;
   status: AuditStatus;
-  vulnerabilities?: OssVuln[];
 }
 
 export interface AuditResponse {
@@ -31,27 +30,6 @@ export interface NpmPackageResponse {
   [key: string]: unknown;
 }
 
-export interface OssVuln {
-  id: string;
-  title: string;
-  description: string;
-  cvssScore: number;
-  cve: string;
-  reference: string;
-  severity: string;
-}
-
-export interface OssIndexResponse {
-  coordinates: string;
-  vulnerabilities: OssVuln[];
-}
-
 export interface UploadedFileWithBuffer {
   buffer: Buffer;
-}
-
-export interface CachedAuditResult {
-  hash: string;
-  message: string;
-  results: AuditResult[];
 }

@@ -34,8 +34,6 @@ export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
     __: string,
     profile: GithubProfile,
   ): GitHubValidatePayload {
-    console.log('📦 validate called with profile:', profile);
-
     return {
       githubId: profile.id,
       username: profile.username,
