@@ -10,6 +10,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { GithubModule } from './github/github.module';
+import { PdfModule } from './pdf/pdf.module';
+import { AnalyzerModule } from './analyzer/analyzer.module';
 
 @Module({
   imports: [
@@ -43,6 +45,8 @@ import { GithubModule } from './github/github.module';
     UsersModule,
     AuthModule,
     GithubModule,
+    PdfModule,
+    AnalyzerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
