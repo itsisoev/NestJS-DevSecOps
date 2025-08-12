@@ -42,4 +42,22 @@ export class GithubService {
       return null;
     }
   }
+
+  async getUserNotifications(token: string): Promise<any[]> {
+    try {
+      const res = await axios.get('https://api.github.com/notifications', {
+        headers: {
+          Authorization: `token ${token}`,
+          Accept: 'application/vnd.github.v3+json',
+        },
+        params: {
+          all: true,
+        },
+      });
+      return res.data;
+    } catch (error) {
+      console.error('GitHub API error:', error.response?.data || error.message);
+      throw error;
+    }
+  }
 }

@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { GithubModule } from './github/github.module';
 import { PdfModule } from './pdf/pdf.module';
 import { AnalyzerModule } from './analyzer/analyzer.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { AnalyzerModule } from './analyzer/analyzer.module';
     GithubModule,
     PdfModule,
     AnalyzerModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
