@@ -2,6 +2,7 @@ import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
 import { GithubService } from './github.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { DependencyAnalyzerService } from '../analyzer/dependency-analyzer.service';
+import { GitHubProfile } from '../users/user.interface';
 
 @Controller('github')
 export class GithubController {
@@ -12,15 +13,22 @@ export class GithubController {
 
   @UseGuards(JwtAuthGuard)
   @Get('repos')
-  async getRepos(@Req() req: Request & { user: any }) {
+  async getRepos(@Req() req: Request & { user: GitHubProfile }) {
     const token = req.user.githubAccessToken;
     return this.githubService.getUserRepos(token);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('notifications')
+  async getNotifications(@Req() req: Request & { user: GitHubProfile }) {
+    const token = req.user.githubAccessToken;
+    return this.githubService.getUserNotifications(token);
   }
 
   @Get('package-json/:owner/:repo')
   @UseGuards(JwtAuthGuard)
   async getPackageJson(
-    @Req() req: Request & { user: any },
+    @Req() req: Request & { user: GitHubProfile },
     @Param('owner') owner: string,
     @Param('repo') repo: string,
   ) {
