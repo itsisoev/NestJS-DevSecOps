@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { GithubRepo } from './github.interface';
+import { GitHubNotification, GithubRepo } from './github.interface';
 
 @Injectable()
 export class GithubService {
@@ -38,26 +38,22 @@ export class GithubService {
 
       const decoded = Buffer.from(content, 'base64').toString('utf-8');
       return JSON.parse(decoded);
-    } catch (err) {
+    } catch {
       return null;
     }
   }
 
-  async getUserNotifications(token: string): Promise<any[]> {
-    try {
-      const res = await axios.get('https://api.github.com/notifications', {
+  async getUserNotifications(token: string): Promise<GitHubNotification[]> {
+    const res = await axios.get<GitHubNotification[]>(
+      'https://api.github.com/notifications',
+      {
         headers: {
           Authorization: `token ${token}`,
           Accept: 'application/vnd.github.v3+json',
         },
-        params: {
-          all: true,
-        },
-      });
-      return res.data;
-    } catch (error) {
-      console.error('GitHub API error:', error.response?.data || error.message);
-      throw error;
-    }
+        params: { all: true },
+      },
+    );
+    return res.data;
   }
 }

@@ -3,10 +3,15 @@ import * as madge from 'madge';
 import simpleGit from 'simple-git';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { DependencyGraph } from './dependency.type';
+
 
 @Injectable()
 export class DependencyAnalyzerService {
-  async analyzeGithubRepo(owner: string, repo: string): Promise<any> {
+  async analyzeGithubRepo(
+    owner: string,
+    repo: string,
+  ): Promise<DependencyGraph | null> {
     const tmpDir = path.join('/tmp', `${owner}-${repo}-${Date.now()}`);
     const gitUrl = `https://github.com/${owner}/${repo}.git`;
 
